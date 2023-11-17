@@ -5,14 +5,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -25,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -153,6 +158,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                 .fillMaxSize()
                 .padding(8.dp)
                 .background(Color.White),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
             val state = rememberCalendarState(
                 startMonth = startMonth,
@@ -163,8 +169,10 @@ fun MainScreen(adjacentMonths: Long = 500) {
             val coroutineScope = rememberCoroutineScope()
 
             val visibleMonth = rememberFirstMostVisibleMonth(state, viewportPercent = 90f)
+
             SimpleCalendarTitle(
-                modifier = Modifier.padding(vertical = 10.dp, horizontal = 8.dp),
+                modifier = Modifier
+                    .padding(vertical = 10.dp, horizontal = 8.dp),
                 currentMonth = visibleMonth.yearMonth,
                 goToPrevious = {
                     coroutineScope.launch {
@@ -194,9 +202,131 @@ fun MainScreen(adjacentMonths: Long = 500) {
                     MonthHeader(daysOfWeek = daysOfWeek)
                 },
             )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp, start = 8.dp, end = 8.dp),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(end = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_circle_12),
+                            contentDescription = null,
+                            tint = Color.LightGray
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 4.dp),
+                            text = "1 смена",
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.padding(start = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_circle_12),
+                            contentDescription = null,
+                            tint = Color.DarkGray
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 4.dp),
+                            text = "2 смена",
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.padding(start = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_circle_12),
+                            contentDescription = null,
+                            tint = Color.Red
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 4.dp),
+                            text = "Выходной",
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(vertical = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_circle_12),
+                            contentDescription = null,
+                            tint = Color.Yellow
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 4.dp),
+                            text = "Готов к подработке",
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 16.dp, start = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_circle_12),
+                            contentDescription = null,
+                            tint = Color.Blue
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 4.dp),
+                            text = "Больничный",
+                        )
+                    }
+                }
+//
+            }
+
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.5f)
+                    .background(color = Color.Yellow)
+            )
+
+
+
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+                    .background(color = Color.DarkGray),
+                verticalArrangement = Arrangement.Bottom
+            ) {
+
+            }
         }
     }
+}
 
+@Composable
+private fun Menu() {
+
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+            .background(color = Color.Black),
+        verticalArrangement = Arrangement.Bottom
+    ) {
+
+    }
 }
 
 @Composable
