@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -157,7 +158,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(8.dp)
-                .background(Color.White),
+                .background(Color.Blue),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             val state = rememberCalendarState(
@@ -170,127 +171,133 @@ fun MainScreen(adjacentMonths: Long = 500) {
 
             val visibleMonth = rememberFirstMostVisibleMonth(state, viewportPercent = 90f)
 
-            SimpleCalendarTitle(
-                modifier = Modifier
-                    .padding(vertical = 10.dp, horizontal = 8.dp),
-                currentMonth = visibleMonth.yearMonth,
-                goToPrevious = {
-                    coroutineScope.launch {
-                        state.animateScrollToMonth(state.firstVisibleMonth.yearMonth.previousMonth)
-                    }
-                },
-                goToNext = {
-                    coroutineScope.launch {
-                        state.animateScrollToMonth(state.firstVisibleMonth.yearMonth.nextMonth)
-                    }
-                },
-            )
-            HorizontalCalendar(
-                modifier = Modifier
-                    .testTag("Calendar"),
-                state = state,
-                dayContent = { day ->
-                    Day(day, isSelected = selections.contains(day)) { clicked ->
-                        if (selections.contains(clicked)) {
-                            selections.remove(clicked)
-                        } else {
-                            selections.add(clicked)
-                        }
-                    }
-                },
-                monthHeader = {
-                    MonthHeader(daysOfWeek = daysOfWeek)
-                },
-            )
-
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp, start = 8.dp, end = 8.dp),
+                    .clip(shape = RoundedCornerShape(10))
+                    .background(Color.Green)
             ) {
-                Row(
+
+                SimpleCalendarTitle(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                ) {
-                    Row(
-                        modifier = Modifier.padding(end = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_circle_12),
-                            contentDescription = null,
-                            tint = Color.LightGray
-                        )
-                        Text(
-                            modifier = Modifier.padding(start = 4.dp),
-                            text = "1 смена",
-                        )
-                    }
-                    Row(
-                        modifier = Modifier.padding(start = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_circle_12),
-                            contentDescription = null,
-                            tint = Color.DarkGray
-                        )
-                        Text(
-                            modifier = Modifier.padding(start = 4.dp),
-                            text = "2 смена",
-                        )
-                    }
-                    Row(
-                        modifier = Modifier.padding(start = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_circle_12),
-                            contentDescription = null,
-                            tint = Color.Red
-                        )
-                        Text(
-                            modifier = Modifier.padding(start = 4.dp),
-                            text = "Выходной",
-                        )
-                    }
-                }
-                Row(
+                        .padding(vertical = 10.dp, horizontal = 8.dp),
+                    currentMonth = visibleMonth.yearMonth,
+                    goToPrevious = {
+                        coroutineScope.launch {
+                            state.animateScrollToMonth(state.firstVisibleMonth.yearMonth.previousMonth)
+                        }
+                    },
+                    goToNext = {
+                        coroutineScope.launch {
+                            state.animateScrollToMonth(state.firstVisibleMonth.yearMonth.nextMonth)
+                        }
+                    },
+                )
+                HorizontalCalendar(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .testTag("Calendar"),
+                    state = state,
+                    dayContent = { day ->
+                        Day(day, isSelected = selections.contains(day)) { clicked ->
+                            if (selections.contains(clicked)) {
+                                selections.remove(clicked)
+                            } else {
+                                selections.add(clicked)
+                            }
+                        }
+                    },
+                    monthHeader = {
+                        MonthHeader(daysOfWeek = daysOfWeek)
+                    },
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp, start = 8.dp, end = 8.dp),
                 ) {
                     Row(
                         modifier = Modifier
-                            .padding(vertical = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                            .fillMaxWidth(),
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_circle_12),
-                            contentDescription = null,
-                            tint = Color.Yellow
-                        )
-                        Text(
-                            modifier = Modifier.padding(start = 4.dp),
-                            text = "Готов к подработке",
-                        )
+                        Row(
+                            modifier = Modifier.padding(end = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_circle_12),
+                                contentDescription = null,
+                                tint = Color.LightGray
+                            )
+                            Text(
+                                modifier = Modifier.padding(start = 4.dp),
+                                text = "1 смена",
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.padding(start = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_circle_12),
+                                contentDescription = null,
+                                tint = Color.DarkGray
+                            )
+                            Text(
+                                modifier = Modifier.padding(start = 4.dp),
+                                text = "2 смена",
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.padding(start = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_circle_12),
+                                contentDescription = null,
+                                tint = Color.Red
+                            )
+                            Text(
+                                modifier = Modifier.padding(start = 4.dp),
+                                text = "Выходной",
+                            )
+                        }
                     }
                     Row(
                         modifier = Modifier
-                            .padding(top = 16.dp, start = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                            .fillMaxWidth(),
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_circle_12),
-                            contentDescription = null,
-                            tint = Color.Blue
-                        )
-                        Text(
-                            modifier = Modifier.padding(start = 4.dp),
-                            text = "Больничный",
-                        )
+                        Row(
+                            modifier = Modifier
+                                .padding(vertical = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_circle_12),
+                                contentDescription = null,
+                                tint = Color.Yellow
+                            )
+                            Text(
+                                modifier = Modifier.padding(start = 4.dp),
+                                text = "Готов к подработке",
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .padding(top = 16.dp, start = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_circle_12),
+                                contentDescription = null,
+                                tint = Color.Blue
+                            )
+                            Text(
+                                modifier = Modifier.padding(start = 4.dp),
+                                text = "Больничный",
+                            )
+                        }
                     }
-                }
 //
+                }
             }
 
             Spacer(
@@ -299,8 +306,6 @@ fun MainScreen(adjacentMonths: Long = 500) {
                     .fillMaxHeight(0.5f)
                     .background(color = Color.Yellow)
             )
-
-
 
             Column(
                 modifier = Modifier
