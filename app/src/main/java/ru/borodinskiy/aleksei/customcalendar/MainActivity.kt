@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,8 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.StrokeCap.Companion.Square
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -69,6 +66,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 //var isChooseDate = false
 @Composable
 fun MainScreen(adjacentMonths: Long = 500) {
@@ -80,7 +78,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
     val daysOfWeek = remember { daysOfWeek() }
 
     //Visible
-    var isChooseDate = false
+    var isChooseDate = true
 
     Surface(
         color = Color.Black
@@ -104,7 +102,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
 
             Column(
                 modifier = Modifier
-                    .clip(shape = RoundedCornerShape(10))
+                    .clip(RoundedCornerShape(20.dp, 20.dp, 20.dp, 20.dp))
                     .background(Color.Green)
             ) {
 
@@ -144,7 +142,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 24.dp, start = 8.dp, end = 8.dp),
+                        .padding(top = 16.dp, start = 8.dp, end = 8.dp),
                 ) {
                     Row(
                         modifier = Modifier
@@ -162,6 +160,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                             Text(
                                 modifier = Modifier.padding(start = 4.dp),
                                 text = "1 смена",
+                                fontSize = 12.sp
                             )
                         }
                         Row(
@@ -176,6 +175,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                             Text(
                                 modifier = Modifier.padding(start = 4.dp),
                                 text = "2 смена",
+                                fontSize = 12.sp
                             )
                         }
                         Row(
@@ -190,16 +190,18 @@ fun MainScreen(adjacentMonths: Long = 500) {
                             Text(
                                 modifier = Modifier.padding(start = 4.dp),
                                 text = "Выходной",
+                                fontSize = 12.sp
                             )
                         }
                     }
                     Row(
                         modifier = Modifier
+                            .padding(bottom = 8.dp)
                             .fillMaxWidth(),
                     ) {
                         Row(
                             modifier = Modifier
-                                .padding(vertical = 16.dp),
+                                .padding(vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
@@ -210,11 +212,12 @@ fun MainScreen(adjacentMonths: Long = 500) {
                             Text(
                                 modifier = Modifier.padding(start = 4.dp),
                                 text = "Готов к подработке",
+                                fontSize = 12.sp
                             )
                         }
                         Row(
                             modifier = Modifier
-                                .padding(top = 16.dp, start = 16.dp),
+                                .padding(top = 8.dp, start = 16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
@@ -225,6 +228,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                             Text(
                                 modifier = Modifier.padding(start = 4.dp),
                                 text = "Больничный",
+                                fontSize = 12.sp
                             )
                         }
                     }
@@ -244,31 +248,47 @@ fun MainScreen(adjacentMonths: Long = 500) {
                     modifier = Modifier
                         .fillMaxHeight()
                         .fillMaxWidth()
+                        .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
                         .background(color = Color.Green),
-                    verticalArrangement = Arrangement.Bottom
+                    verticalArrangement = Arrangement.Top
                 ) {
 
-                    Row {
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
 
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(0.9f),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                modifier = Modifier.padding(start = 4.dp),
+                                text = "18 - ",
+                                fontSize = 18.sp
+                            )
+                            Text(
+                                modifier = Modifier.padding(start = 4.dp),
+                                text = "22 октября",
+                                fontSize = 18.sp
+                            )
+                        }
+
+                        Icon(
+                            modifier = Modifier
+                                .padding(end = 16.dp),
+                            painter = painterResource(id = R.drawable.ic_circle_12),
+                            contentDescription = null,
+                        )
                     }
                 }
             }
 
         }
-    }
-}
-
-@Composable
-private fun Menu() {
-
-    Column(
-        modifier = Modifier
-            .fillMaxHeight()
-            .fillMaxWidth()
-            .background(color = Color.Black),
-        verticalArrangement = Arrangement.Bottom
-    ) {
-
     }
 }
 
@@ -305,7 +325,6 @@ private fun Day(day: CalendarDay, isSelected: Boolean, onClick: (CalendarDay) ->
             .clip(RoundedCornerShape(10.dp))
             .background(
                 color = if (isSelected) Color.LightGray else Color.Yellow
-
             )
             // Отключить клики по inDates/outDated
             .clickable(
