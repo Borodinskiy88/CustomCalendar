@@ -38,102 +38,101 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 
-
-    @Composable
-    fun rememberFirstMostVisibleMonth(
-        state: CalendarState,
-        viewportPercent: Float = 50f,
-    ): CalendarMonth {
-        val visibleMonth = remember(state) { mutableStateOf(state.firstVisibleMonth) }
-        LaunchedEffect(state) {
-            snapshotFlow { state.layoutInfo.firstMostVisibleMonth(viewportPercent) }
-                .filterNotNull()
-                .collect { month -> visibleMonth.value = month }
-        }
-        return visibleMonth.value
+@Composable
+fun rememberFirstMostVisibleMonth(
+    state: CalendarState,
+    viewportPercent: Float = 50f,
+): CalendarMonth {
+    val visibleMonth = remember(state) { mutableStateOf(state.firstVisibleMonth) }
+    LaunchedEffect(state) {
+        snapshotFlow { state.layoutInfo.firstMostVisibleMonth(viewportPercent) }
+            .filterNotNull()
+            .collect { month -> visibleMonth.value = month }
     }
+    return visibleMonth.value
+}
 
-    @Composable
-    fun SimpleCalendarTitle(
-        modifier: Modifier,
-        currentMonth: YearMonth,
-        goToPrevious: () -> Unit,
-        goToNext: () -> Unit,
+@Composable
+fun SimpleCalendarTitle(
+    modifier: Modifier,
+    currentMonth: YearMonth,
+    goToPrevious: () -> Unit,
+    goToNext: () -> Unit,
+) {
+    Row(
+        modifier = modifier.height(40.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = modifier.height(40.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            CalendarNavigationIcon(
-                icon = painterResource(id = R.drawable.ic_arrow_left_24),
-                contentDescription = "Previous",
-                onClick = goToPrevious,
-            )
-            Text(
-                modifier = Modifier
-                    .weight(1f)
-                    .testTag("MonthTitle"),
-                text = currentMonth.displayText(),
-                fontSize = 22.sp,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Medium,
-            )
-            CalendarNavigationIcon(
-                icon = painterResource(id = R.drawable.ic_arrow_right_24),
-                contentDescription = "Next",
-                onClick = goToNext,
-            )
-        }
-    }
-
-    @Composable
-    fun CalendarNavigationIcon(
-        icon: Painter,
-        contentDescription: String,
-        onClick: () -> Unit,
-    ) = Box(
-        modifier = Modifier
-            .fillMaxHeight()
-            .aspectRatio(1f)
-            .clip(shape = CircleShape)
-            .clickable(role = Role.Button, onClick = onClick),
-    ) {
-        Icon(
+        CalendarNavigationIcon(
+            icon = painterResource(id = R.drawable.ic_arrow_left_24),
+            contentDescription = "Previous",
+            onClick = goToPrevious,
+        )
+        Text(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(4.dp)
-                .align(Alignment.Center),
-            painter = icon,
-            contentDescription = contentDescription,
+                .weight(1f)
+                .testTag("MonthTitle"),
+            text = currentMonth.displayText(),
+            fontSize = 22.sp,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Medium,
+        )
+        CalendarNavigationIcon(
+            icon = painterResource(id = R.drawable.ic_arrow_right_24),
+            contentDescription = "Next",
+            onClick = goToNext,
         )
     }
+}
 
-    fun CalendarLayoutInfo.firstMostVisibleMonth(viewportPercent: Float = 50f): CalendarMonth? {
-        return if (visibleMonthsInfo.isEmpty()) {
-            null
-        } else {
-            val viewportSize = (viewportEndOffset + viewportStartOffset) * viewportPercent / 100f
-            visibleMonthsInfo.firstOrNull { itemInfo ->
-                if (itemInfo.offset < 0) {
-                    itemInfo.offset + itemInfo.size >= viewportSize
-                } else {
-                    itemInfo.size - itemInfo.offset >= viewportSize
-                }
-            }?.month
-        }
-    }
+@Composable
+fun CalendarNavigationIcon(
+    icon: Painter,
+    contentDescription: String,
+    onClick: () -> Unit,
+) = Box(
+    modifier = Modifier
+        .fillMaxHeight()
+        .aspectRatio(1f)
+        .clip(shape = CircleShape)
+        .clickable(role = Role.Button, onClick = onClick),
+) {
+    Icon(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(4.dp)
+            .align(Alignment.Center),
+        painter = icon,
+        contentDescription = contentDescription,
+    )
+}
 
-    fun YearMonth.displayText(short: Boolean = false): String {
-        return "${this.month.displayText(short = short)} ${this.year}"
+fun CalendarLayoutInfo.firstMostVisibleMonth(viewportPercent: Float = 50f): CalendarMonth? {
+    return if (visibleMonthsInfo.isEmpty()) {
+        null
+    } else {
+        val viewportSize = (viewportEndOffset + viewportStartOffset) * viewportPercent / 100f
+        visibleMonthsInfo.firstOrNull { itemInfo ->
+            if (itemInfo.offset < 0) {
+                itemInfo.offset + itemInfo.size >= viewportSize
+            } else {
+                itemInfo.size - itemInfo.offset >= viewportSize
+            }
+        }?.month
     }
+}
 
-    fun Month.displayText(short: Boolean = true): String {
-        val style = if (short) TextStyle.SHORT else TextStyle.FULL
-        return getDisplayName(style, Locale.ENGLISH)
-    }
+fun YearMonth.displayText(short: Boolean = false): String {
+    return "${this.month.displayText(short = short)} ${this.year}"
+}
 
-    fun DayOfWeek.displayText(uppercase: Boolean = false): String {
-        return getDisplayName(TextStyle.SHORT, Locale.ENGLISH).let { value ->
-            if (uppercase) value.uppercase(Locale.ENGLISH) else value
-        }
+fun Month.displayText(short: Boolean = true): String {
+    val style = if (short) TextStyle.SHORT else TextStyle.FULL
+    return getDisplayName(style, Locale.ENGLISH)
+}
+
+fun DayOfWeek.displayText(uppercase: Boolean = false): String {
+    return getDisplayName(TextStyle.SHORT, Locale.ENGLISH).let { value ->
+        if (uppercase) value.uppercase(Locale.ENGLISH) else value
     }
+}

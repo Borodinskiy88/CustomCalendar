@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -86,7 +88,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp)
+                .padding(top = 8.dp, start = 8.dp, end = 8.dp)
                 .background(Color.Blue),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
@@ -102,6 +104,8 @@ fun MainScreen(adjacentMonths: Long = 500) {
 
             Column(
                 modifier = Modifier
+                    //todo сделать верх уже низа
+//                    .padding(horizontal = 20.dp)
                     .clip(RoundedCornerShape(20.dp, 20.dp, 20.dp, 20.dp))
                     .background(Color.Green)
             ) {
@@ -239,7 +243,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.05f)
+                    .fillMaxHeight(0.02f)
                     .background(color = Color.Yellow)
             )
 
@@ -269,21 +273,44 @@ fun MainScreen(adjacentMonths: Long = 500) {
                             Text(
                                 modifier = Modifier.padding(start = 4.dp),
                                 text = "18 - ",
-                                fontSize = 18.sp
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
                             )
                             Text(
                                 modifier = Modifier.padding(start = 4.dp),
-                                text = "22 октября",
-                                fontSize = 18.sp
+                                text = "22 октября 2023",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
                             )
                         }
 
                         Icon(
                             modifier = Modifier
                                 .padding(end = 16.dp),
-                            painter = painterResource(id = R.drawable.ic_circle_12),
+                            painter = painterResource(id = R.drawable.ic_close_24),
                             contentDescription = null,
                         )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(text = "5 дней")
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .padding(top = 16.dp)
+                            .background(color = Color.LightGray)
+                    ) {
+                        Text(text = "Запросить на смену")
+
+
                     }
                 }
             }
@@ -324,6 +351,7 @@ private fun Day(day: CalendarDay, isSelected: Boolean, onClick: (CalendarDay) ->
 //            .clickable { isChooseDate =! isChooseDate }
             .clip(RoundedCornerShape(10.dp))
             .background(
+                //Цвет выбранный
                 color = if (isSelected) Color.LightGray else Color.Yellow
             )
             // Отключить клики по inDates/outDated
