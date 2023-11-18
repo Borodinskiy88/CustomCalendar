@@ -29,6 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.StrokeCap.Companion.Square
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +48,7 @@ import com.kizitonwose.calendar.core.previousMonth
 import kotlinx.coroutines.launch
 import ru.borodinskiy.aleksei.customcalendar.ui.theme.CustomCalendarTheme
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
@@ -66,90 +69,18 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-//@Composable
-//fun MainScreen() {
-//    val currentMonth = remember { YearMonth.now() }
-//    val startMonth = remember { currentMonth.minusMonths(100) } // Adjust as needed
-//    val endMonth = remember { currentMonth.plusMonths(100) } // Adjust as needed
-//    val daysOfWeek = remember { daysOfWeek() } // Available from the library
-//
-//    val state = rememberCalendarState(
-//        startMonth = startMonth,
-//        endMonth = endMonth,
-//        firstVisibleMonth = currentMonth,
-//        firstDayOfWeek = daysOfWeek.first()
-//    )
-//
-//    DaysOfWeekTitle(daysOfWeek = daysOfWeek)
-//
-//    HorizontalCalendar(
-//        state = state,
-//        dayContent = { Day(it) }
-//    )
-//
-////    If you need a vertical calendar.
-////    VerticalCalendar(
-////        state = state,
-////        dayContent = { Day(it) }
-////    )
-//}
-//
-//@Composable
-//fun Day(day: CalendarDay) {
-//    Box(
-//        modifier = Modifier
-//            .aspectRatio(0.9f), // This is important for square sizing!
-//        contentAlignment = Alignment.Center
-//    ) {
-//        Text(
-//            text = day.date.dayOfMonth.toString()
-//        )
-//    }
-//}
-//
-//@Composable
-//fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//    ) {
-//        for (dayOfWeek in daysOfWeek) {
-//            Text(
-//                modifier = Modifier.weight(1f).padding(bottom = 24.dp),
-//                textAlign = TextAlign.Center,
-//                text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
-//            )
-//        }
-//    }
-//}
-//
-//@Composable
-//private fun MonthHeader(daysOfWeek: List<DayOfWeek>) {
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .testTag("MonthHeader"),
-//    ) {
-//        for (dayOfWeek in daysOfWeek) {
-//            Text(
-//                modifier = Modifier.weight(1f),
-//                textAlign = TextAlign.Center,
-//                fontSize = 15.sp,
-//                text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
-//                fontWeight = FontWeight.Medium,
-//            )
-//        }
-//    }
-//}
-
+//var isChooseDate = false
 @Composable
 fun MainScreen(adjacentMonths: Long = 500) {
+    val today = remember { LocalDate.now() }
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(adjacentMonths) }
     val endMonth = remember { currentMonth.plusMonths(adjacentMonths) }
     val selections = remember { mutableStateListOf<CalendarDay>() }
     val daysOfWeek = remember { daysOfWeek() }
+
+    //Visible
+    var isChooseDate = false
 
     Surface(
         color = Color.Black
@@ -198,6 +129,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                     state = state,
                     dayContent = { day ->
                         Day(day, isSelected = selections.contains(day)) { clicked ->
+
                             if (selections.contains(clicked)) {
                                 selections.remove(clicked)
                             } else {
@@ -303,19 +235,25 @@ fun MainScreen(adjacentMonths: Long = 500) {
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.5f)
+                    .fillMaxHeight(0.05f)
                     .background(color = Color.Yellow)
             )
 
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-                    .background(color = Color.DarkGray),
-                verticalArrangement = Arrangement.Bottom
-            ) {
+            if (isChooseDate) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth()
+                        .background(color = Color.Green),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
 
+                    Row {
+
+                    }
+                }
             }
+
         }
     }
 }
@@ -360,9 +298,15 @@ private fun Day(day: CalendarDay, isSelected: Boolean, onClick: (CalendarDay) ->
         modifier = Modifier
             .aspectRatio(1f) // This is important for square-sizing!
             .testTag("MonthDay")
-            .padding(6.dp)
-            .clip(CircleShape)
-            .background(color = if (isSelected) Color.LightGray else Color.Transparent)
+            .padding(1.dp)
+            //Todo форма квадратов
+//            .clip(CircleShape)
+//            .clickable { isChooseDate =! isChooseDate }
+            .clip(RoundedCornerShape(10.dp))
+            .background(
+                color = if (isSelected) Color.LightGray else Color.Yellow
+
+            )
             // Отключить клики по inDates/outDated
             .clickable(
                 enabled = day.position == DayPosition.MonthDate,
@@ -378,7 +322,8 @@ private fun Day(day: CalendarDay, isSelected: Boolean, onClick: (CalendarDay) ->
         Text(
             text = day.date.dayOfMonth.toString(),
             color = textColor,
-            fontSize = 14.sp,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold
         )
     }
 }
