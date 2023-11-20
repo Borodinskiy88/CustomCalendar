@@ -48,7 +48,7 @@ fun Modifier.backgroundHighlight(
             when {
                 day.date.isBefore(today) -> {
                     //Этот месяц, прошедшие дня
-                    textColor(Color.DarkGray)
+                    textColor(Color.LightGray)
                     this
                 }
                 startDate == day.date && endDate == null -> {
@@ -86,11 +86,6 @@ fun Modifier.backgroundHighlight(
                    textColor(Color.Black)
                     padding(10.dp)
                         .background(color = Color.White, shape = CircleShape)
-//                        .border(
-//                            width = 8.dp,
-//                            shape = CircleShape,
-//                            color = Color.White,
-//                        )
 
                 }
                 else -> {
@@ -100,8 +95,8 @@ fun Modifier.backgroundHighlight(
             }
         }
         DayPosition.InDate -> {
-            //День другого месяца
-            textColor(Color.DarkGray)
+            //День предыдущего месяца
+            textColor(Color.LightGray)
             if (startDate != null && endDate != null &&
                 ContinuousSelectionHelper.isInDateBetweenSelection(day.date, startDate, endDate)
             ) {
@@ -110,7 +105,7 @@ fun Modifier.backgroundHighlight(
             } else this
         }
         DayPosition.OutDate -> {
-            //День другого месяца
+            //День следующего месяца
             textColor(Color.DarkGray)
             if (startDate != null && endDate != null &&
                 ContinuousSelectionHelper.isOutDateBetweenSelection(day.date, startDate, endDate)
