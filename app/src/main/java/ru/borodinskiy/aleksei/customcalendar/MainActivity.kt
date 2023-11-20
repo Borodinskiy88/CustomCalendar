@@ -1,7 +1,6 @@
 package ru.borodinskiy.aleksei.customcalendar
 
 import android.os.Bundle
-import android.view.Menu
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -17,12 +16,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -68,7 +65,6 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -88,14 +84,21 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaffoldSample() {
-    Scaffold (
-        topBar = { TopAppBar(title = {Text("Top App Bar")})},
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Top App Bar") })
+        },
         content = { padding ->
             Box(modifier = Modifier.padding(padding)) {
                 MainScreen()
             }
         },
-        bottomBar = { BottomAppBar { Text("Bottom App Bar") } }
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier.fillMaxHeight(0.1f)
+            ) { Text("Bottom App Bar") }
+        }
 
     )
 }
@@ -118,9 +121,10 @@ fun MainScreen(adjacentMonths: Long = 500) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                .padding(top = 16.dp, start = 16.dp, end = 16.dp)
                 .background(Color.Blue),
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val state = rememberCalendarState(
                 startMonth = startMonth,
@@ -142,7 +146,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
 
                 SimpleCalendarTitle(
                     modifier = Modifier
-                        .padding(vertical = 10.dp, horizontal = 8.dp),
+                        .padding(vertical = 4.dp, horizontal = 8.dp),
                     currentMonth = visibleMonth.yearMonth,
                     goToPrevious = {
                         coroutineScope.launch {
@@ -162,6 +166,8 @@ fun MainScreen(adjacentMonths: Long = 500) {
                     dayContent = { day ->
                         Day(day, isSelected = selections.contains(day)) { clicked ->
 
+                            isChooseDate = true
+
                             if (selections.contains(clicked)) {
                                 selections.remove(clicked)
                             } else {
@@ -176,7 +182,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, start = 8.dp, end = 8.dp),
+                        .padding(top = 8.dp, start = 8.dp, end = 8.dp),
                 ) {
                     Row(
                         modifier = Modifier
@@ -273,7 +279,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.02f)
+                    .fillMaxHeight(0.06f)
                     .background(color = Color.Yellow)
             )
 
@@ -289,7 +295,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
 
                     Row(
                         modifier = Modifier
-                            .padding(top = 16.dp)
+                            .padding(top = 8.dp)
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceAround,
                         verticalAlignment = Alignment.CenterVertically
@@ -303,20 +309,21 @@ fun MainScreen(adjacentMonths: Long = 500) {
                             Text(
                                 modifier = Modifier.padding(start = 4.dp),
                                 text = "18 - ",
-                                fontSize = 18.sp,
+                                fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
                                 modifier = Modifier.padding(start = 4.dp),
                                 text = "22 октября 2023",
-                                fontSize = 18.sp,
+                                fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         }
 
                         Icon(
                             modifier = Modifier
-                                .padding(end = 16.dp),
+                                .padding(end = 16.dp)
+                                .clickable { isChooseDate = false },
                             painter = painterResource(id = R.drawable.ic_close_24),
                             contentDescription = null,
                         )
@@ -328,7 +335,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                             .padding(top = 4.dp),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Text(text = "5 дней")
+                        Text(text = "5 дней", fontSize = 12.sp)
                     }
 
                     Column(
@@ -339,10 +346,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                             .background(color = Color.LightGray),
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Column {
-                            Text(text = "Запросить на смену")
-                            Menu()
-                        }
+                        Menu()
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth(),
@@ -351,7 +355,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                             Button(
                                 onClick = { /*TODO*/ },
                                 modifier = Modifier
-                                    .padding(bottom = 16.dp)
+                                    .padding(bottom = 8.dp, start = 4.dp, end = 4.dp)
                                     .fillMaxWidth(),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color.Black,
@@ -363,14 +367,13 @@ fun MainScreen(adjacentMonths: Long = 500) {
                                 )
                             }
                         }
-
                     }
                 }
             }
-
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Menu() {
@@ -385,7 +388,7 @@ fun Menu() {
             expanded = expanded,
             onExpandedChange = { expanded = !expanded },
             modifier = Modifier
-                .padding(top = 4.dp)
+//                .padding(top = 4.dp)
         ) {
             TextField(
                 // The `menuAnchor` modifier must be passed to the text field for correctness.
@@ -393,8 +396,8 @@ fun Menu() {
                 readOnly = true,
                 value = selectedOptionText,
                 onValueChange = {},
-                label = null,
-                //                          label = { Text("Label") },
+//                label = null,
+                label = { Text("Запросить на смену") },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(),
             )
