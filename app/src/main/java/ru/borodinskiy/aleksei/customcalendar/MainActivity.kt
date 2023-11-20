@@ -123,7 +123,10 @@ fun MainScreen(
     val daysOfWeek = remember { daysOfWeek() }
 
     //Visible
-    var isChooseDate by remember { mutableStateOf(true) }
+    var isChooseDate by remember { mutableStateOf(false) }
+    
+    //TODO!!!!!!!!!!!!!!!!!!!!
+    var isClicks by remember { mutableStateOf(false) }
 
     Surface(
         color = Color.LightGray
@@ -174,6 +177,8 @@ fun MainScreen(
                     state = state,
                     dayContent = { value ->
                         Day(
+                            //TODO!!!!!!!!!!!!!!!!!!!!
+                            backgrounds = isClicks,
                             value,
                             today = today,
                             selection = selection,
@@ -202,6 +207,8 @@ fun MainScreen(
                 BottomPanel(
                     save = {
                         isChooseDate = false
+                        //TODO!!!!!!!!!!!!!!!!!!!!
+                        isClicks = !isClicks
                     },
 
                     close = {
@@ -481,6 +488,8 @@ private fun HelpStrings() {
 
 @Composable
 private fun Day(
+    //TODO!!!!!!!!!!!!!!!!!!!!
+    backgrounds: Boolean,
     day: CalendarDay,
     today: LocalDate,
     selection: DateSelection,
@@ -494,8 +503,9 @@ private fun Day(
             .padding(1.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(
+                //TODO!!!!!!!!!!!!!!!!!!!!
                 //Цвет выбранный
-                color = Color.Yellow
+                if (backgrounds) Color.Yellow else Color.Red
             )
             .clickable(
 //                enabled = day.position == DayPosition.MonthDate && day.date >= today,
