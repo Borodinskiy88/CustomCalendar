@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
@@ -161,6 +162,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                 )
                 HorizontalCalendar(
                     modifier = Modifier
+                        .padding(horizontal = 8.dp)
                         .testTag("Calendar"),
                     state = state,
                     dayContent = { day ->
@@ -344,7 +346,8 @@ fun MainScreen(adjacentMonths: Long = 500) {
                             .fillMaxHeight()
                             .padding(top = 16.dp)
                             .background(color = Color.LightGray),
-                        verticalArrangement = Arrangement.SpaceBetween
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Menu()
                         Row(
@@ -382,7 +385,8 @@ fun Menu() {
     var selectedOptionText by remember { mutableStateOf(options[0]) }
 // We want to react on tap/press on TextField to show menu
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.TopCenter
     ) {
         ExposedDropdownMenuBox(
             expanded = expanded,
@@ -398,6 +402,7 @@ fun Menu() {
                 onValueChange = {},
 //                label = null,
                 label = { Text("Запросить на смену") },
+
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(),
             )
