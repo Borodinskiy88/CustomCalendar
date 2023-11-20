@@ -97,7 +97,7 @@ fun ScaffoldSample() {
         },
         bottomBar = {
             BottomAppBar(
-                modifier = Modifier.fillMaxHeight(0.1f)
+                modifier = Modifier.fillMaxHeight(0.1f).background(color = Color.White)
             ) { Text("Bottom App Bar") }
         }
 
@@ -117,13 +117,13 @@ fun MainScreen(adjacentMonths: Long = 500) {
     var isChooseDate by remember { mutableStateOf(true) }
 
     Surface(
-        color = Color.Black
+        color = Color.LightGray
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                .background(Color.Blue),
+                .background(Color.LightGray),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -142,7 +142,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                     //todo сделать верх уже низа
 //                    .padding(20.dp)
                     .clip(RoundedCornerShape(20.dp, 20.dp, 20.dp, 20.dp))
-                    .background(Color.Green)
+                    .background(Color.White)
             ) {
 
                 SimpleCalendarTitle(
@@ -162,7 +162,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                 )
                 HorizontalCalendar(
                     modifier = Modifier
-                        .padding(horizontal = 8.dp)
+                        .padding(start = 12.dp, end = 12.dp, bottom = 8.dp)
                         .testTag("Calendar"),
                     state = state,
                     dayContent = { day ->
@@ -184,7 +184,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp, start = 8.dp, end = 8.dp),
+                        .padding(horizontal = 16.dp),
                 ) {
                     Row(
                         modifier = Modifier
@@ -243,7 +243,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                     ) {
                         Row(
                             modifier = Modifier
-                                .padding(vertical = 8.dp),
+                                .padding(top = 4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
@@ -259,7 +259,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                         }
                         Row(
                             modifier = Modifier
-                                .padding(top = 8.dp, start = 16.dp),
+                                .padding(top = 4.dp, start = 16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
@@ -274,24 +274,17 @@ fun MainScreen(adjacentMonths: Long = 500) {
                             )
                         }
                     }
-//
                 }
             }
-
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.06f)
-                    .background(color = Color.Yellow)
-            )
 
             if (isChooseDate) {
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
                         .fillMaxWidth()
+                        .padding(top = 16.dp)
                         .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
-                        .background(color = Color.Green),
+                        .background(color = Color.White),
                     verticalArrangement = Arrangement.Top
                 ) {
 
@@ -345,7 +338,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                             .fillMaxWidth()
                             .fillMaxHeight()
                             .padding(top = 16.dp)
-                            .background(color = Color.LightGray),
+                            .background(color = Color.White),
                         verticalArrangement = Arrangement.SpaceBetween,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -358,7 +351,7 @@ fun MainScreen(adjacentMonths: Long = 500) {
                             Button(
                                 onClick = { /*TODO*/ },
                                 modifier = Modifier
-                                    .padding(bottom = 8.dp, start = 4.dp, end = 4.dp)
+                                    .padding(bottom = 8.dp, start = 12.dp, end = 12.dp)
                                     .fillMaxWidth(),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color.Black,

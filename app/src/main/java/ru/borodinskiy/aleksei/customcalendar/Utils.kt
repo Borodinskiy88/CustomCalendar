@@ -128,7 +128,8 @@ fun YearMonth.displayText(short: Boolean = false): String {
 
 fun Month.displayText(short: Boolean = true): String {
     val style = if (short) TextStyle.SHORT else TextStyle.FULL
-    return getDisplayName(style, Locale.ENGLISH)
+    //Todo название месяца
+    return getDisplayName(style, Locale.getDefault())
 }
 
 fun DayOfWeek.displayText(uppercase: Boolean = false): String {
