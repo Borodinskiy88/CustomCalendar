@@ -5,18 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
@@ -34,7 +31,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -58,12 +54,19 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
 import kotlinx.coroutines.launch
+import ru.borodinskiy.aleksei.customcalendar.ContinuousSelectionHelper.getSelection
 import ru.borodinskiy.aleksei.customcalendar.ui.theme.CustomCalendarTheme
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
+
+//Выбранные дни
+private val primaryColor = Color.Black.copy(alpha = 0.9f)
+private val selectionColor = primaryColor
+//Пространство между ними
+private val continuousSelectionColor = Color.Black.copy(alpha = 0.3f)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,17 +103,17 @@ fun ScaffoldSample() {
                 modifier = Modifier.fillMaxHeight(0.1f).background(color = Color.White)
             ) { Text("Bottom App Bar") }
         }
-
     )
 }
 
 @Composable
-fun MainScreen(adjacentMonths: Long = 500) {
-    val today = remember { LocalDate.now() }
+fun MainScreen(dateSelected: (startDate: LocalDate, endDate: LocalDate) -> Unit = { _, _ -> }) {
+
     val currentMonth = remember { YearMonth.now() }
-    val startMonth = remember { currentMonth.minusMonths(adjacentMonths) }
-    val endMonth = remember { currentMonth.plusMonths(adjacentMonths) }
-    val selections = remember { mutableStateListOf<CalendarDay>() }
+    val startMonth = remember { currentMonth.minusMonths(24) }
+    val endMonth = remember { currentMonth.plusMonths(24) }
+    val today = remember { LocalDate.now() }
+    var selection by remember { mutableStateOf(DateSelection()) }
     val daysOfWeek = remember { daysOfWeek() }
 
     //Visible
@@ -139,8 +142,6 @@ fun MainScreen(adjacentMonths: Long = 500) {
 
             Column(
                 modifier = Modifier
-                    //todo сделать верх уже низа
-//                    .padding(20.dp)
                     .clip(RoundedCornerShape(20.dp, 20.dp, 20.dp, 20.dp))
                     .background(Color.White)
             ) {
@@ -165,15 +166,19 @@ fun MainScreen(adjacentMonths: Long = 500) {
                         .padding(start = 12.dp, end = 12.dp, bottom = 8.dp)
                         .testTag("Calendar"),
                     state = state,
-                    dayContent = { day ->
-                        Day(day, isSelected = selections.contains(day)) { clicked ->
-
-                            isChooseDate = true
-
-                            if (selections.contains(clicked)) {
-                                selections.remove(clicked)
-                            } else {
-                                selections.add(clicked)
+                    dayContent = { value ->
+                        Day(
+                            value,
+                            today = today,
+                            selection = selection,
+                        ) { day ->
+                            if (day.position == DayPosition.MonthDate &&
+                                (day.date == today || day.date.isAfter(today))
+                            ) {
+                                selection = getSelection(
+                                    clickedDate = day.date,
+                                    dateSelection = selection,
+                                )
                             }
                         }
                     },
@@ -438,41 +443,79 @@ private fun MonthHeader(daysOfWeek: List<DayOfWeek>) {
 }
 
 @Composable
-private fun Day(day: CalendarDay, isSelected: Boolean, onClick: (CalendarDay) -> Unit) {
-
+private fun Day(
+    day: CalendarDay,
+    today: LocalDate,
+    selection: DateSelection,
+    onClick: (CalendarDay) -> Unit,
+) {
+    var textColor = Color.Black
     Box(
         modifier = Modifier
             .aspectRatio(1f) // This is important for square-sizing!
             .testTag("MonthDay")
             .padding(1.dp)
-            //Todo форма квадратов
-//            .clip(CircleShape)
-//            .clickable { isChooseDate =! isChooseDate }
             .clip(RoundedCornerShape(10.dp))
             .background(
                 //Цвет выбранный
-                color = if (isSelected) Color.LightGray else Color.Yellow
+                color = Color.Yellow
             )
-            // Отключить клики по inDates/outDated
             .clickable(
-                enabled = day.position == DayPosition.MonthDate,
+                enabled = day.position == DayPosition.MonthDate && day.date >= today,
+//                showRipple = false,
                 onClick = { onClick(day) },
-            ),
+            )
+            .backgroundHighlight(
+                day = day,
+                today = today,
+                selection = selection,
+                selectionColor = selectionColor,
+                continuousSelectionColor = continuousSelectionColor,
+            ) { textColor = it },
         contentAlignment = Alignment.Center,
     ) {
-        val textColor = when (day.position) {
-            // Color.Unspecified будет использовать цвет текста по умолчанию из текущей темы
-            DayPosition.MonthDate -> if (isSelected) Color.White else Color.Unspecified
-            DayPosition.InDate, DayPosition.OutDate -> Color.LightGray
-        }
         Text(
             text = day.date.dayOfMonth.toString(),
             color = textColor,
             fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Medium,
         )
     }
 }
+//
+//@Composable
+//private fun Day(day: CalendarDay, isSelected: Boolean, onClick: (CalendarDay) -> Unit) {
+//
+//    Box(
+//        modifier = Modifier
+//            .aspectRatio(1f) // This is important for square-sizing!
+//            .testTag("MonthDay")
+//            .padding(1.dp)
+//            .clip(RoundedCornerShape(10.dp))
+//            .background(
+//                //Цвет выбранный
+//                color = if (isSelected) Color.LightGray else Color.Yellow
+//            )
+//            // Отключить клики по inDates/outDated
+//            .clickable(
+//                enabled = day.position == DayPosition.MonthDate,
+//                onClick = { onClick(day) },
+//            ),
+//        contentAlignment = Alignment.Center,
+//    ) {
+//        val textColor = when (day.position) {
+//            // Color.Unspecified будет использовать цвет текста по умолчанию из текущей темы
+//            DayPosition.MonthDate -> if (isSelected) Color.White else Color.Unspecified
+//            DayPosition.InDate, DayPosition.OutDate -> Color.LightGray
+//        }
+//        Text(
+//            text = day.date.dayOfMonth.toString(),
+//            color = textColor,
+//            fontSize = 16.sp,
+//            fontWeight = FontWeight.Bold
+//        )
+//    }
+//}
 
 
 @Preview(showBackground = true)

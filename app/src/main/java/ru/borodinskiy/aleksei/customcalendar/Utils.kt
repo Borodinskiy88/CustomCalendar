@@ -51,6 +51,7 @@ fun rememberFirstMostVisibleMonth(
     return visibleMonth.value
 }
 
+//Шапка календаря
 @Composable
 fun SimpleCalendarTitle(
     modifier: Modifier,
@@ -72,7 +73,7 @@ fun SimpleCalendarTitle(
                 .weight(1f)
                 .testTag("MonthTitle"),
             text = currentMonth.displayText(),
-            fontSize = 22.sp,
+            fontSize = 20.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Medium,
         )
@@ -133,6 +134,13 @@ fun Month.displayText(short: Boolean = true): String {
     return getDisplayName(style, Locale.getDefault())
 }
 
+fun DayOfWeek.displayText(uppercase: Boolean = false): String {
+    return getDisplayName(TextStyle.SHORT, Locale.ENGLISH).let { value ->
+        if (uppercase) value.uppercase(Locale.ENGLISH) else value
+    }
+}
+
+//Русская локаль названий месяцев
 fun localeMonth(month: String): String {
     if (month == "мая"){
         return "май"
@@ -141,10 +149,4 @@ fun localeMonth(month: String): String {
         month.removeSuffix("я") + "ь"
     }else
         month.removeSuffix("а")
-}
-
-fun DayOfWeek.displayText(uppercase: Boolean = false): String {
-    return getDisplayName(TextStyle.SHORT, Locale.ENGLISH).let { value ->
-        if (uppercase) value.uppercase(Locale.ENGLISH) else value
-    }
 }
