@@ -37,7 +37,6 @@ import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 
-
 @Composable
 fun rememberFirstMostVisibleMonth(
     state: CalendarState,
@@ -123,13 +122,25 @@ fun CalendarLayoutInfo.firstMostVisibleMonth(viewportPercent: Float = 50f): Cale
 }
 
 fun YearMonth.displayText(short: Boolean = false): String {
-    return "${this.month.displayText(short = short)} ${this.year}"
+    return "${this.month.displayText(short = short).replaceFirstChar { it.uppercase() }} ${this.year}"
 }
 
 fun Month.displayText(short: Boolean = true): String {
     val style = if (short) TextStyle.SHORT else TextStyle.FULL
-    //Todo название месяца
+    if (Locale.getDefault() == Locale("ru", "RU")){
+        return localeMonth(getDisplayName(style, Locale.getDefault()))
+    }
     return getDisplayName(style, Locale.getDefault())
+}
+
+fun localeMonth(month: String): String {
+    if (month == "мая"){
+        return "май"
+    }
+    return if (month.last() == 'я'){
+        month.removeSuffix("я") + "ь"
+    }else
+        month.removeSuffix("а")
 }
 
 fun DayOfWeek.displayText(uppercase: Boolean = false): String {
