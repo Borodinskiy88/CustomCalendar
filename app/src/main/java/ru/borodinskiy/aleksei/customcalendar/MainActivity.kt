@@ -316,7 +316,7 @@ fun BottomPanel(
                     //Клик по кнопке
                     onClick = save,
                     //Можно нажать, если ты выбраны
-                    enabled = selection.daysBetween != null,
+                    enabled = selection.startDate != null,
                     modifier = Modifier
                         .padding(bottom = 24.dp, start = 12.dp, end = 12.dp)
                         .fillMaxWidth(),
