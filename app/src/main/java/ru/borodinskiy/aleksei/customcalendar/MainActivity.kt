@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
@@ -60,6 +61,7 @@ import ru.borodinskiy.aleksei.customcalendar.ui.theme.CustomCalendarTheme
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
+import kotlin.time.Duration.Companion.days
 
 //Выбранные дни
 private val primaryColor = Color.Black.copy(alpha = 0.9f)
@@ -98,13 +100,6 @@ fun ScaffoldSample() {
                 CalendarScreen()
             }
         }
-//        bottomBar = {
-//            BottomAppBar(
-//                modifier = Modifier
-//                    .fillMaxHeight(0.1f)
-//                    .background(color = Color.White)
-//            ) { Text("Bottom App Bar") }
-//        }
     )
 }
 
@@ -228,17 +223,14 @@ fun BottomPanel(
 
     Column(
         modifier = Modifier
-            .fillMaxHeight()
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(top = 16.dp)
             .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
             .background(color = Color.White),
-        verticalArrangement = Arrangement.Top
     ) {
 
         Row(
             modifier = Modifier
-                .padding(top = 8.dp)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
@@ -252,13 +244,13 @@ fun BottomPanel(
                 Text(
                     modifier = Modifier.padding(start = 4.dp),
                     text = "18 - ",
-                    fontSize = 16.sp,
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     modifier = Modifier.padding(start = 4.dp),
                     text = "22 октября 2023",
-                    fontSize = 16.sp,
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -280,19 +272,27 @@ fun BottomPanel(
 
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 4.dp),
-            horizontalArrangement = Arrangement.Center
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
         ) {
-
-            Text(text = "5 дней", fontSize = 12.sp)
+            val daysBetween = selection.daysBetween
+            val text = if (daysBetween == null) {
+                "5 дней"
+            } else {
+                "$daysBetween ${
+                    if ((daysBetween % 10).toInt() == 1 && (daysBetween).toInt() != 11) "день" 
+                    else if ((daysBetween % 10).toInt() == 2 || (daysBetween % 10).toInt() == 3 || (daysBetween % 10).toInt() % 10 == 4) "дня" 
+                    else "дней"
+                } "
+            }
+            Text(text = text, fontSize = 14.sp)
         }
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .padding(top = 16.dp)
+                .padding(top = 12.dp)
                 .background(color = Color.White),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -366,6 +366,12 @@ fun Menu() {
                             selectedOptionText = selectionOption
                             expanded = false
                         },
+
+
+
+
+
+
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                     )
                 }
