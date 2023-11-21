@@ -51,7 +51,7 @@ fun rememberFirstMostVisibleMonth(
     return visibleMonth.value
 }
 
-//Шапка календаря
+//Шапка календаря с переключением месяцев
 @Composable
 fun SimpleCalendarTitle(
     modifier: Modifier,
@@ -126,18 +126,22 @@ fun YearMonth.displayText(short: Boolean = false): String {
     return "${this.month.displayText(short = short).replaceFirstChar { it.uppercase() }} ${this.year}"
 }
 
+//Месяц
 fun Month.displayText(short: Boolean = true): String {
     val style = if (short) TextStyle.SHORT else TextStyle.FULL
-    if (Locale.getDefault() == Locale("ru", "RU")){
-        return localeMonth(getDisplayName(style, Locale.getDefault()))
-    }
-    return getDisplayName(style, Locale.getDefault())
+    return if (Locale.getDefault() != Locale("ru", "RU")){
+        localeMonth(getDisplayName(style, Locale.getDefault()))
+    } else
+        localeMonth(getDisplayName(style, Locale("ru", "RU")))
 }
 
-fun DayOfWeek.displayText(uppercase: Boolean = false): String {
-    return getDisplayName(TextStyle.SHORT, Locale.ENGLISH).let { value ->
-        if (uppercase) value.uppercase(Locale.ENGLISH) else value
-    }
+//Дни недели
+fun DayOfWeek.displayText(short: Boolean = true): String {
+    val style = if (short) TextStyle.SHORT else TextStyle.FULL
+    return if (Locale.getDefault() != Locale("ru", "RU")){
+        (getDisplayName(style, Locale.getDefault()))
+    } else
+        (getDisplayName(style, Locale("ru", "RU")))
 }
 
 //Русская локаль названий месяцев

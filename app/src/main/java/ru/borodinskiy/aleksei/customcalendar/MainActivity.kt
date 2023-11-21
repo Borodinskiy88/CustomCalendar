@@ -60,8 +60,6 @@ import ru.borodinskiy.aleksei.customcalendar.ui.theme.CustomCalendarTheme
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
-import java.time.format.TextStyle
-import java.util.Locale
 
 //Выбранные дни
 private val primaryColor = Color.Black.copy(alpha = 0.9f)
@@ -75,7 +73,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             CustomCalendarTheme {
-                // Поверхностный контейнер, использующий цвет фона из темы.
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -97,21 +95,21 @@ fun ScaffoldSample() {
         },
         content = { padding ->
             Box(modifier = Modifier.padding(padding)) {
-                MainScreen()
+                CalendarScreen()
             }
-        },
-        bottomBar = {
-            BottomAppBar(
-                modifier = Modifier
-                    .fillMaxHeight(0.1f)
-                    .background(color = Color.White)
-            ) { Text("Bottom App Bar") }
         }
+//        bottomBar = {
+//            BottomAppBar(
+//                modifier = Modifier
+//                    .fillMaxHeight(0.1f)
+//                    .background(color = Color.White)
+//            ) { Text("Bottom App Bar") }
+//        }
     )
 }
 
 @Composable
-fun MainScreen(
+fun CalendarScreen(
     dateSelected: (startDate: LocalDate, endDate: LocalDate) -> Unit = { _, _ -> }
 ) {
 
@@ -120,13 +118,13 @@ fun MainScreen(
     val endMonth = remember { currentMonth.plusMonths(24) }
     val today = remember { LocalDate.now() }
     var selection by remember { mutableStateOf(DateSelection()) }
-    val daysOfWeek = remember { daysOfWeek() }
+    val daysOfWeek = remember { daysOfWeek(DayOfWeek.MONDAY) }
 
     //Visible
-    var isChooseDate by remember { mutableStateOf(false) }
+    var isShowBottomPanel by remember { mutableStateOf(true) }
     
     //TODO!!!!!!!!!!!!!!!!!!!!
-    var isClicks by remember { mutableStateOf(false) }
+    var isClickSaveButton by remember { mutableStateOf(false) }
 
     Surface(
         color = Color.LightGray
@@ -178,7 +176,7 @@ fun MainScreen(
                     dayContent = { value ->
                         Day(
                             //TODO!!!!!!!!!!!!!!!!!!!!
-                            backgrounds = isClicks,
+                            backgrounds = isClickSaveButton,
                             value,
                             today = today,
                             selection = selection,
@@ -187,7 +185,7 @@ fun MainScreen(
 //                                (day.date == today || day.date.isAfter(today))
 //                            )
                     //        {
-                                isChooseDate = true
+                                isShowBottomPanel = true
                                 selection = getSelection(
                                     clickedDate = day.date,
                                     dateSelection = selection,
@@ -196,23 +194,25 @@ fun MainScreen(
                         }
                     },
                     monthHeader = {
-                        MonthHeader(daysOfWeek = daysOfWeek)
+                        DayOfWeek(daysOfWeek = daysOfWeek)
                     },
                 )
 
                 HelpStrings()
             }
 
-            if (isChooseDate) {
+            if (isShowBottomPanel) {
                 BottomPanel(
+                    //Todo Выбор равняется выбору, мать его???
+                    selection = selection,
                     save = {
-                        isChooseDate = false
+                        isShowBottomPanel = false
                         //TODO!!!!!!!!!!!!!!!!!!!!
-                        isClicks = !isClicks
+                        isClickSaveButton = !isClickSaveButton
                     },
 
                     close = {
-                        isChooseDate = false
+                        isShowBottomPanel = false
                     }
                 )
             }
@@ -221,7 +221,10 @@ fun MainScreen(
 }
 
 @Composable
-fun BottomPanel(save: () -> Unit, close: () -> Unit) {
+fun BottomPanel(
+    selection: DateSelection,
+    save: () -> Unit,
+    close: () -> Unit) {
 
     Column(
         modifier = Modifier
@@ -305,8 +308,10 @@ fun BottomPanel(save: () -> Unit, close: () -> Unit) {
                 Button(
                     //Клик по кнопке
                     onClick = save,
+                    //Можно нажать, если ты выбраны
+                    enabled = selection.daysBetween != null,
                     modifier = Modifier
-                        .padding(bottom = 8.dp, start = 12.dp, end = 12.dp)
+                        .padding(bottom = 24.dp, start = 12.dp, end = 12.dp)
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Black,
@@ -370,7 +375,7 @@ fun Menu() {
 }
 
 @Composable
-private fun MonthHeader(daysOfWeek: List<DayOfWeek>) {
+private fun DayOfWeek(daysOfWeek: List<DayOfWeek>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -381,7 +386,7 @@ private fun MonthHeader(daysOfWeek: List<DayOfWeek>) {
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center,
                 fontSize = 15.sp,
-                text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale("ru", "RU")),
+                text = dayOfWeek.displayText(), //Настройки в Utils
                 fontWeight = FontWeight.Medium,
             )
         }
@@ -496,9 +501,11 @@ private fun Day(
     onClick: (CalendarDay) -> Unit,
 ) {
     var textColor = Color.Black
+    //TODO прописать рядом бекграунд???
+    var backgroundDays = Color.Yellow
     Box(
         modifier = Modifier
-            .aspectRatio(1f) // This is important for square-sizing!
+            .aspectRatio(1f) // Форма рамки каждой даты, 1 - квадрат!
             .testTag("MonthDay")
             .padding(1.dp)
             .clip(RoundedCornerShape(10.dp))
@@ -506,6 +513,9 @@ private fun Day(
                 //TODO!!!!!!!!!!!!!!!!!!!!
                 //Цвет выбранный
                 if (backgrounds) Color.Yellow else Color.Red
+                //TODO
+                //Дни между
+                //selection.dayBetween
             )
             .clickable(
 //                enabled = day.position == DayPosition.MonthDate && day.date >= today,
@@ -519,12 +529,13 @@ private fun Day(
                 selection = selection,
                 selectionColor = selectionColor,
                 continuousSelectionColor = continuousSelectionColor,
-            ) { textColor = it },
+            ) { textColor = it},
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = day.date.dayOfMonth.toString(),
             color = textColor,
+//            color = if (day.position == DayPosition.MonthDate) Color.Black else Color.Gray,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
         )
