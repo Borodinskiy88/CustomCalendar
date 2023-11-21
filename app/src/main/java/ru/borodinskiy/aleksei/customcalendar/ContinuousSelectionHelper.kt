@@ -16,14 +16,6 @@ data class DateSelection(val startDate: LocalDate? = null, val endDate: LocalDat
     }
 }
 
-//Отображение выбранного числа в нижней панели
-private val rangeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-//Если числа два, это первое
-private val firstRangeFormatter = DateTimeFormatter.ofPattern("d")
-fun dateRangeDisplayText(startDate: LocalDate, endDate: LocalDate): String {
-    return "Selected: ${rangeFormatter.format(startDate)} - ${rangeFormatter.format(endDate)}"
-}
-
 object ContinuousSelectionHelper {
     fun getSelection(
         clickedDate: LocalDate,

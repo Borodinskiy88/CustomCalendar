@@ -1,5 +1,6 @@
 package ru.borodinskiy.aleksei.customcalendar
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -31,6 +32,7 @@ import com.kizitonwose.calendar.compose.CalendarLayoutInfo
 import com.kizitonwose.calendar.compose.CalendarState
 import com.kizitonwose.calendar.core.CalendarMonth
 import kotlinx.coroutines.flow.filterNotNull
+import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.Month
 import java.time.YearMonth
@@ -143,6 +145,20 @@ fun DayOfWeek.displayText(short: Boolean = true): String {
     } else
         (getDisplayName(style, Locale("ru", "RU")))
 }
+
+//Реформат даты
+@SuppressLint("SimpleDateFormat")
+fun reformatDate(date: String): String {
+    val dateObj = SimpleDateFormat("yyyy-MM-dd").parse(date)
+    return if (Locale.getDefault() != Locale("ru", "RU")) {
+        val reformatDate = dateObj?.let { SimpleDateFormat("d  MMMM", Locale.getDefault()).format(it) }
+        reformatDate.toString()
+    } else {
+        val reformatDate = dateObj?.let { SimpleDateFormat("d  MMMM", Locale("ru")).format(it) }
+        reformatDate.toString()
+    }
+}
+
 
 //Русская локаль названий месяцев
 fun localeMonth(month: String): String {

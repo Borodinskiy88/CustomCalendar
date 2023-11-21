@@ -241,15 +241,22 @@ fun BottomPanel(
                     .fillMaxWidth(0.9f),
                 horizontalArrangement = Arrangement.Center
             ) {
+
                 Text(
                     modifier = Modifier.padding(start = 4.dp),
-                    text = "18 - ",
+                    text =
+                        if (selection.startDate != null)
+                            reformatDate(selection.startDate.toString())
+                        else "",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     modifier = Modifier.padding(start = 4.dp),
-                    text = "22 октября 2023",
+                    text =
+                    if (selection.endDate != null)
+                    " - " + reformatDate(selection.endDate.toString())
+                    else "",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -272,7 +279,7 @@ fun BottomPanel(
 
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth(0.9f),
             horizontalArrangement = Arrangement.Center,
         ) {
             val daysBetween = selection.daysBetween
@@ -280,7 +287,8 @@ fun BottomPanel(
                 "5 дней"
             } else {
                 "$daysBetween ${
-                    if ((daysBetween % 10).toInt() == 1 && (daysBetween).toInt() != 11) "день" 
+                    if ((daysBetween % 10).toInt() == 1 && (daysBetween).toInt() != 11) "день"
+                    else if((daysBetween).toInt() == 1) "день"
                     else if ((daysBetween % 10).toInt() == 2 || (daysBetween % 10).toInt() == 3 || (daysBetween % 10).toInt() % 10 == 4) "дня" 
                     else "дней"
                 } "
@@ -503,6 +511,7 @@ private fun Day(
     var textColor = Color.Black
     //TODO прописать рядом бекграунд???
     var backgroundDays = Color.Yellow
+
     Box(
         modifier = Modifier
             .aspectRatio(1f) // Форма рамки каждой даты, 1 - квадрат!
@@ -518,9 +527,9 @@ private fun Day(
                 //selection.dayBetween
             )
             .clickable(
+//TODO разобраться!!!
 //                enabled = day.position == DayPosition.MonthDate && day.date >= today,
                 enabled = true,
-//                showRipple = false,
                 onClick = { onClick(day) },
             )
             .backgroundHighlight(
@@ -529,7 +538,7 @@ private fun Day(
                 selection = selection,
                 selectionColor = selectionColor,
                 continuousSelectionColor = continuousSelectionColor,
-            ) { textColor = it},
+            ) { textColor = it },
         contentAlignment = Alignment.Center,
     ) {
         Text(
