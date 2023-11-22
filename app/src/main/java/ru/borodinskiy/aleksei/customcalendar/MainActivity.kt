@@ -10,13 +10,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -61,13 +58,12 @@ import ru.borodinskiy.aleksei.customcalendar.ui.theme.CustomCalendarTheme
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
-import kotlin.time.Duration.Companion.days
 
-//Выбранные дни
+//Выбранные дни, начальный и конечный, цвет круглой рамки
 private val primaryColor = Color.Black.copy(alpha = 0.9f)
 private val selectionColor = primaryColor
 
-//Пространство между ними
+//Пространство между ними, цвет тени
 private val continuousSelectionColor = Color.Black.copy(alpha = 0.3f)
 
 class MainActivity : ComponentActivity() {
@@ -117,7 +113,7 @@ fun CalendarScreen(
 
     //Visible
     var isShowBottomPanel by remember { mutableStateOf(true) }
-    
+
     //TODO!!!!!!!!!!!!!!!!!!!!
     var isClickSaveButton by remember { mutableStateOf(false) }
 
@@ -176,10 +172,14 @@ fun CalendarScreen(
                             today = today,
                             selection = selection,
                         ) { day ->
-                            if (day.position == (DayPosition.MonthDate ) &&
+                            if (day.position == (DayPosition.MonthDate) &&
                                 (day.date == today || day.date.isAfter(today)) ||
-                                (day.position == (DayPosition.OutDate ))
+                                (day.position == (DayPosition.OutDate))
                             )
+//                            if (day.position == DayPosition.MonthDate  ||
+//                                day.position == DayPosition.InDate ||
+//                                day.position == DayPosition.OutDate
+//                            )
                             {
                                 isShowBottomPanel = true
                                 selection = getSelection(
@@ -220,7 +220,8 @@ fun CalendarScreen(
 fun BottomPanel(
     selection: DateSelection,
     save: () -> Unit,
-    close: () -> Unit) {
+    close: () -> Unit
+) {
 
     Column(
         modifier = Modifier
@@ -246,9 +247,9 @@ fun BottomPanel(
                 Text(
                     modifier = Modifier.padding(start = 4.dp),
                     text =
-                        if (selection.startDate != null)
-                            reformatDate(selection.startDate.toString())
-                        else "",
+                    if (selection.startDate != null)
+                        reformatDate(selection.startDate.toString())
+                    else "",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -256,7 +257,7 @@ fun BottomPanel(
                     modifier = Modifier.padding(start = 4.dp),
                     text =
                     if (selection.endDate != null)
-                    " - " + reformatDate(selection.endDate.toString())
+                        " - " + reformatDate(selection.endDate.toString())
                     else "",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
@@ -289,8 +290,8 @@ fun BottomPanel(
             } else {
                 "$daysBetween ${
                     if ((daysBetween % 10).toInt() == 1 && (daysBetween).toInt() != 11) "день"
-                    else if((daysBetween).toInt() == 1) "день"
-                    else if ((daysBetween % 10).toInt() == 2 || (daysBetween % 10).toInt() == 3 || (daysBetween % 10).toInt() % 10 == 4) "дня" 
+                    else if ((daysBetween).toInt() == 1) "день"
+                    else if ((daysBetween % 10).toInt() == 2 || (daysBetween % 10).toInt() == 3 || (daysBetween % 10).toInt() % 10 == 4) "дня"
                     else "дней"
                 } "
             }
@@ -393,6 +394,11 @@ private fun DayOfWeek(daysOfWeek: List<DayOfWeek>) {
         for (dayOfWeek in daysOfWeek) {
             Text(
                 modifier = Modifier.weight(1f),
+                color = when (dayOfWeek) {
+                    DayOfWeek.SUNDAY -> Color.Red
+                    DayOfWeek.SATURDAY -> Color.Red
+                    else -> Color.Black
+                },
                 textAlign = TextAlign.Center,
                 fontSize = 15.sp,
                 text = dayOfWeek.displayText(), //Настройки в Utils
@@ -513,6 +519,7 @@ private fun Day(
     //TODO прописать рядом бекграунд???
     var backgroundDays = Color.Yellow
 
+
     Box(
         modifier = Modifier
             .aspectRatio(1f) // Форма рамки каждой даты, 1 - квадрат!
@@ -528,7 +535,7 @@ private fun Day(
                 //selection.dayBetween
             )
             .clickable(
-//TODO разобраться!!!
+
 //                enabled = day.position == DayPosition.MonthDate && day.date >= today,
                 enabled = true,
                 onClick = { onClick(day) },
@@ -539,7 +546,9 @@ private fun Day(
                 selection = selection,
                 selectionColor = selectionColor,
                 continuousSelectionColor = continuousSelectionColor,
-            ) { textColor = it },
+            ) {
+                textColor = it
+            },
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -565,7 +574,7 @@ private fun Day(
 //                //Цвет выбранный
 //                color = if (isSelected) Color.LightGray else Color.Yellow
 //            )
-            // Отключить клики по inDates/outDated
+// Отключить клики по inDates/outDated
 //            .clickable(
 //                enabled = day.position == DayPosition.MonthDate,
 //                onClick = { onClick(day) },
