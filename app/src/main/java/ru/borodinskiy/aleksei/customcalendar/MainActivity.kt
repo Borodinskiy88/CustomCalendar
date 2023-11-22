@@ -176,16 +176,17 @@ fun CalendarScreen(
                             today = today,
                             selection = selection,
                         ) { day ->
-//                            if (day.position == (DayPosition.MonthDate ) &&
-//                                (day.date == today || day.date.isAfter(today))
-//                            )
-                    //        {
+                            if (day.position == (DayPosition.MonthDate ) &&
+                                (day.date == today || day.date.isAfter(today)) ||
+                                (day.position == (DayPosition.OutDate ))
+                            )
+                            {
                                 isShowBottomPanel = true
                                 selection = getSelection(
                                     clickedDate = day.date,
                                     dateSelection = selection,
                                 )
-                    //        }
+                            }
                         }
                     },
                     monthHeader = {
