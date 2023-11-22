@@ -2,6 +2,7 @@ package ru.borodinskiy.aleksei.customcalendar
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.testTag
@@ -169,4 +171,26 @@ fun localeMonth(month: String): String {
         month.removeSuffix("я") + "ь"
     }else
         month.removeSuffix("а")
+}
+
+fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
+    clickable(indication = null,
+        interactionSource = remember { MutableInteractionSource() }) {
+        onClick()
+    }
+}
+
+fun daysCountTitle(daysBetween: Long): String {
+    return if ((daysBetween).toInt() == 11 ||
+        (daysBetween).toInt() == 12 ||
+        (daysBetween).toInt() == 13 ||
+        (daysBetween).toInt() == 14
+    ) "дней"
+    else if ((daysBetween % 10).toInt() == 1 && (daysBetween).toInt() != 11) "день"
+    else if ((daysBetween).toInt() == 1) "день"
+    else if ((daysBetween % 10).toInt() == 2 ||
+        (daysBetween % 10).toInt() == 3 ||
+        (daysBetween % 10).toInt() % 10 == 4
+    ) "дня"
+    else "дней"
 }

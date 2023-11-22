@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -185,6 +184,7 @@ fun CalendarScreen(
                                 selection = getSelection(
                                     clickedDate = day.date,
                                     dateSelection = selection,
+                                    color = Color.Green
                                 )
                             }
                         }
@@ -283,18 +283,16 @@ fun BottomPanel(
             modifier = Modifier
                 .fillMaxWidth(0.9f),
             horizontalArrangement = Arrangement.Center,
-        ) {
-            val daysBetween = selection.daysBetween
-            val text = if (daysBetween == null) {
-                "5 дней"
-            } else {
-                "$daysBetween ${
-                    if ((daysBetween % 10).toInt() == 1 && (daysBetween).toInt() != 11) "день"
-                    else if ((daysBetween).toInt() == 1) "день"
-                    else if ((daysBetween % 10).toInt() == 2 || (daysBetween % 10).toInt() == 3 || (daysBetween % 10).toInt() % 10 == 4) "дня"
-                    else "дней"
-                } "
-            }
+        )
+        {
+            val daysBetween = selection.daysBetween?.plus(1)
+            val text =
+                if (daysBetween == null) {
+                    ""
+                } else {
+                    "$daysBetween ${daysCountTitle(daysBetween)}"
+                }
+
             Text(text = text, fontSize = 14.sp)
         }
 
@@ -534,12 +532,16 @@ private fun Day(
                 //Дни между
                 //selection.dayBetween
             )
-            .clickable(
-
-//                enabled = day.position == DayPosition.MonthDate && day.date >= today,
-                enabled = true,
-                onClick = { onClick(day) },
-            )
+            //отключить пульсацию, Utils
+            .noRippleClickable {
+                onClick(day)
+            }
+//            .clickable(
+//
+////                enabled = day.position == DayPosition.MonthDate && day.date >= today,
+//                enabled = true,
+//                onClick = { onClick(day) },
+//            )
             .backgroundHighlight(
                 day = day,
                 today = today,

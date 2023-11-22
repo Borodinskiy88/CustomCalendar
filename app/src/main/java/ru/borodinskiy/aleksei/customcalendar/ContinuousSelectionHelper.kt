@@ -1,5 +1,6 @@
 package ru.borodinskiy.aleksei.customcalendar
 
+import androidx.compose.ui.graphics.Color
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -15,6 +16,7 @@ object ContinuousSelectionHelper {
     fun getSelection(
         clickedDate: LocalDate,
         dateSelection: DateSelection,
+        color: Color
     ): DateSelection {
         val (selectionStartDate, selectionEndDate) = dateSelection
         return if (selectionStartDate != null) {

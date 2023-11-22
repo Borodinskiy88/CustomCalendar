@@ -109,16 +109,45 @@ fun Modifier.backgroundHighlight(
             }
         }
         DayPosition.InDate -> {
-            //День предыдущего месяца
-            textColor(Color.LightGray)
-//            if (startDate != null && endDate != null &&
-//                ContinuousSelectionHelper.isInDateBetweenSelection(day.date, startDate, endDate)
-//            ) {
-//                padding(vertical = padding)
-//                    .background(color = continuousSelectionColor)
-//            }
-//            else
-                this
+            when {
+//                startDate == day.date && endDate == null -> {
+//                    textColor(Color.White)
+//                    padding(padding)
+//                        .background(color = selectionColor, shape = RoundedCornerShape(10.dp))
+//                }
+                //Начальная дата
+                day.date == startDate -> {
+                    textColor(Color.White)
+                    padding(vertical = padding)
+                        .background(
+                            color = continuousSelectionColor,
+                            shape = HalfSizeShape(clipStart = true),
+                        )
+                        .padding(horizontal = padding)
+                        .background(color = selectionColor, shape = RoundedCornerShape(10.dp))
+                }
+                startDate != null && endDate != null && (day.date > startDate && day.date < endDate) -> {
+                    textColor(Color.Black)
+                    padding(vertical = padding)
+                        .background(color = continuousSelectionColor)
+                }
+                //Конечная дата
+                day.date == endDate -> {
+                    textColor(Color.White)
+                    padding(vertical = padding)
+                        .background(
+                            color = continuousSelectionColor,
+                            shape = HalfSizeShape(clipStart = false),
+                        )
+                        .padding(horizontal = padding)
+                        .background(color = selectionColor, shape = RoundedCornerShape(10.dp))
+                }
+                else -> {
+                    //Цвет дат предыдущего месяца по умолчанию
+                    textColor(Color.LightGray)
+                    this
+                }
+            }
         }
         DayPosition.OutDate -> {
             when {
