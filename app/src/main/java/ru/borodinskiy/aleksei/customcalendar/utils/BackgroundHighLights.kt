@@ -1,43 +1,17 @@
-package ru.borodinskiy.aleksei.customcalendar
+package ru.borodinskiy.aleksei.customcalendar.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.RoundRect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
+import ru.borodinskiy.aleksei.customcalendar.ui.theme.darkGrey
 import java.time.LocalDate
 
-//Обрезка тени в левой стороне начального значения, и правой стороне конечного значения
-private class HalfSizeShape(private val clipStart: Boolean) : Shape {
-    override fun createOutline(
-        size: Size,
-        layoutDirection: LayoutDirection,
-        density: Density,
-    ): Outline {
-        val half = size.width / 2f
-        val offset = if (layoutDirection == LayoutDirection.Ltr) {
-            if (clipStart) Offset(half, 0f) else Offset.Zero
-        } else {
-            if (clipStart) Offset.Zero else Offset(half, 0f)
-        }
-        //Между двумя точками прямоугольная рамка
-        return Outline.Rectangle(Rect(offset, Size(half, size.height)))
-    }
-}
 fun Modifier.backgroundHighlight(
     day: CalendarDay,
     today: LocalDate,
@@ -47,145 +21,123 @@ fun Modifier.backgroundHighlight(
     textColor: (Color) -> Unit,
 ): Modifier = composed {
     val (startDate, endDate) = selection
-    val padding = 4.dp
-    //day.position - выбранный день
+
     when (day.position) {
-        //Этот месяц, прошедшие дня
         DayPosition.MonthDate -> {
             when {
-                //day.date - даты
+
                 day.date.isBefore(today) -> {
-                    //Даты прошедших дней
-                    textColor(Color.LightGray)
+                    //Цвет прошедших дней этого месяца
+                    textColor(darkGrey.copy(alpha = 0.4f))
                     this
                 }
-                //если есть начальная дата и нет конечной
+
                 startDate == day.date && endDate == null -> {
-                    textColor(Color.White)
-                    padding(padding)
-                        //цвет и форма рамки выбранного дня
+                    textColor(darkGrey)
+                    padding()
                         .background(color = selectionColor, shape = RoundedCornerShape(10.dp)
                         )
                 }
-                //Начальня дата
                 day.date == startDate -> {
-                    textColor(Color.White)
-                    padding(vertical = padding)
+                    textColor(darkGrey)
+                    padding()
                         .background(
                             color = continuousSelectionColor,
-                            shape = HalfSizeShape(clipStart = true),
                         )
-                        .padding(horizontal = padding)
+                        .padding()
                         .background(color = selectionColor, shape = RoundedCornerShape(10.dp))
                 }
                 //Пространство между начальным и конечным днем заполняется прозрачной рамкой
                 startDate != null && endDate != null && (day.date > startDate && day.date < endDate) -> {
                     textColor(Color.Black)
-                    padding(vertical = padding)
+                    padding()
                         .background(color = continuousSelectionColor)
                 }
-                //Конечная дата
                 day.date == endDate -> {
-                    textColor(Color.White)
-                    padding(vertical = padding)
+                    textColor(darkGrey)
+                    padding()
                         .background(
                             color = continuousSelectionColor,
-                            shape = HalfSizeShape(clipStart = false),
                         )
-                        .padding(horizontal = padding)
                         .background(color = selectionColor, shape = RoundedCornerShape(10.dp))
                 }
                 day.date == today -> {
-                    //Белый круг фона за сегодняшнее число
-                   textColor(Color.Black)
+                    //Белый квадрат фона за сегодняшнее число
+                    textColor(darkGrey)
                     padding(10.dp)
-                        .background(color = Color.White, shape = RoundedCornerShape(10.dp))
+                        .background(color = Color.White, shape = RoundedCornerShape(4.dp))
 
                 }
                 else -> {
-                    textColor(Color.Black)
+                    textColor(darkGrey)
                     this
                 }
             }
         }
+        //Предыдущий месяц
         DayPosition.InDate -> {
             when {
-//                startDate == day.date && endDate == null -> {
-//                    textColor(Color.White)
-//                    padding(padding)
-//                        .background(color = selectionColor, shape = RoundedCornerShape(10.dp))
-//                }
-                //Начальная дата
                 day.date == startDate -> {
-                    textColor(Color.White)
-                    padding(vertical = padding)
+                    textColor(darkGrey)
+                    padding()
                         .background(
                             color = continuousSelectionColor,
-                            shape = HalfSizeShape(clipStart = true),
                         )
-                        .padding(horizontal = padding)
+                        .padding()
                         .background(color = selectionColor, shape = RoundedCornerShape(10.dp))
                 }
                 startDate != null && endDate != null && (day.date > startDate && day.date < endDate) -> {
                     textColor(Color.Black)
-                    padding(vertical = padding)
+                    padding()
                         .background(color = continuousSelectionColor)
                 }
-                //Конечная дата
                 day.date == endDate -> {
-                    textColor(Color.White)
-                    padding(vertical = padding)
+                    textColor(darkGrey)
+                    padding()
                         .background(
                             color = continuousSelectionColor,
-                            shape = HalfSizeShape(clipStart = false),
                         )
-                        .padding(horizontal = padding)
                         .background(color = selectionColor, shape = RoundedCornerShape(10.dp))
                 }
                 else -> {
                     //Цвет дат предыдущего месяца по умолчанию
-                    textColor(Color.LightGray)
+                    textColor(darkGrey.copy(alpha = 0.4f))
                     this
                 }
             }
         }
+        //Следующий месяц
         DayPosition.OutDate -> {
             when {
                 startDate == day.date && endDate == null -> {
-                    textColor(Color.White)
-                    padding(padding)
+                    textColor(darkGrey)
+                    padding()
                         .background(color = selectionColor, shape = RoundedCornerShape(10.dp))
                 }
-                //Начальная дата
                 day.date == startDate -> {
-                    textColor(Color.White)
-                    padding(vertical = padding)
+                    textColor(darkGrey)
+                    padding()
                         .background(
                             color = continuousSelectionColor,
-                            shape = HalfSizeShape(clipStart = true),
                         )
-                        .padding(horizontal = padding)
                         .background(color = selectionColor, shape = RoundedCornerShape(10.dp))
                 }
                 startDate != null && endDate != null && (day.date > startDate && day.date < endDate) -> {
                     textColor(Color.Black)
-                    padding(vertical = padding)
+                    padding()
                         .background(color = continuousSelectionColor)
                 }
-                //Конечная дата
                 day.date == endDate -> {
-                    textColor(Color.White)
-                    padding(vertical = padding)
+                    textColor(darkGrey)
+                    padding()
                         .background(
                             color = continuousSelectionColor,
-                            shape = HalfSizeShape(clipStart = false),
                         )
-                        .padding(horizontal = padding)
                         .background(color = selectionColor, shape = RoundedCornerShape(10.dp))
                 }
                 else -> {
                     //Цвет дат следующего месяца по умолчанию
-                    textColor(Color.DarkGray)
+                    textColor(darkGrey.copy(alpha = 0.7f))
                     this
                 }
             }

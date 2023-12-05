@@ -1,3 +1,16 @@
 <resources>
-    <string name="app_name">CustomCalendar</string>
+    <string name="app_name">Календарь</string>
+    <string name="app_title">Календарь</string>
+
+    <!--Calendar-->
+    <string name="shift_schedule">График смен</string>
+    <string name="string">Сохранить</string>
+    <string name="first_shift">1 смена</string>
+    <string name="second_shift">2 смена</string>
+    <string name="day_off_from_work">Выходной</string>
+    <string name="ready_for_work">Готов к подработке</string>
+    <string name="sick">Больничный</string>
+    <string name="request_a_shift">Запросить на смену</string>
+    <string name="calendar">Календарь</string>
+
 </resources>
